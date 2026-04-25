@@ -10,11 +10,28 @@ Spring Boot REST API for the Customer Management System.
 
 ## Run Locally
 
-Create a local database named `customer_management`, then update `src/main/resources/application-dev.yml` if your MariaDB credentials differ from the defaults.
+Start MariaDB from the repository root:
+
+```bash
+docker compose up -d mariadb
+```
+
+The dev profile expects:
+
+```text
+Database: customer_management
+Username: cms_user
+Password: cms_password
+Port: 3306
+```
+
+Then run the backend from this folder:
 
 ```bash
 mvn spring-boot:run
 ```
+
+Flyway applies database migrations automatically on startup.
 
 ## Test
 
@@ -29,4 +46,3 @@ Swagger UI will be available at:
 ```text
 http://localhost:8080/swagger-ui.html
 ```
-
