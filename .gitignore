@@ -1,0 +1,42 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local planning docs
+doc/
+Agents.md
+
+# Java / Maven
+target/
+*.class
+*.log
+.mvn/timing.properties
+
+# Spring Boot
+backend/logs/
+
+# Node / React / Vite
+node_modules/
+dist/
+build/
+coverage/
+frontend/.vite/
+frontend/.turbo/
+
+# Runtime and temp files
+*.tmp
+*.temp
+*.swp
+*.swo

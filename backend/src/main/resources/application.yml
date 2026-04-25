@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: customer-management-backend
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  frontend:
+    allowed-origin: http://localhost:3000
+  import:
+    batch-size: 500
+    max-file-size-mb: 100
+    max-stored-errors: 100
+  async:
+    core-pool-size: 2
+    max-pool-size: 5
+    queue-capacity: 10
+
