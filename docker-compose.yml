@@ -1,5 +1,6 @@
 services:
   mariadb:
+    # MariaDB 10.6 is compatible with the Flyway version managed by Spring Boot 2.7.
     image: mariadb:10.6
     container_name: customer-management-mariadb
     restart: unless-stopped

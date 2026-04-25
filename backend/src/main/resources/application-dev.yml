@@ -1,5 +1,6 @@
 spring:
   datasource:
+    # Matches the repository root Docker Compose MariaDB service.
     url: jdbc:mariadb://localhost:3306/customer_management
     username: cms_user
     password: cms_password

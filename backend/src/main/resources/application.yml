@@ -9,7 +9,9 @@ spring:
       max-request-size: 100MB
   jpa:
     hibernate:
+      # Flyway owns schema changes; Hibernate should only validate mappings.
       ddl-auto: validate
+    # Avoid accidental lazy loading during JSON serialization.
     open-in-view: false
   flyway:
     enabled: true
@@ -25,11 +27,12 @@ app:
   frontend:
     allowed-origin: http://localhost:3000
   import:
+    # These values are also validated through AppProperties at startup.
     batch-size: 500
     max-file-size-mb: 100
     max-stored-errors: 100
   async:
+    # Keep import processing bounded so uploads cannot consume all request threads.
     core-pool-size: 2
     max-pool-size: 5
     queue-capacity: 10
-

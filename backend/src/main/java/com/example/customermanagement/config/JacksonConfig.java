@@ -15,9 +15,10 @@ public class JacksonConfig {
         return new Jackson2ObjectMapperBuilder()
                 .modules(new JavaTimeModule())
                 .featuresToDisable(
+                        // API dates should remain readable ISO strings, not numeric timestamps.
                         SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        // Extra client fields should not break requests unless validation rejects them.
                         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
                 );
     }
 }
-

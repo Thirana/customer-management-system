@@ -1,3 +1,4 @@
+-- Seed enough master data for dropdowns and assignment demo flows.
 INSERT INTO countries (name) VALUES
     ('Sri Lanka'),
     ('India'),
@@ -11,6 +12,7 @@ INSERT INTO countries (name) VALUES
     ('United Arab Emirates');
 
 INSERT INTO cities (name, country_id)
+-- City inserts resolve country IDs by name so seed data stays readable.
 SELECT 'Colombo', id FROM countries WHERE name = 'Sri Lanka';
 INSERT INTO cities (name, country_id)
 SELECT 'Kandy', id FROM countries WHERE name = 'Sri Lanka';

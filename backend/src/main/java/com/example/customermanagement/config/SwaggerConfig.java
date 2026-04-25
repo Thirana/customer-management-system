@@ -10,6 +10,7 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI customerManagementOpenApi() {
+        // Endpoint-level details will be added on controllers in later phases.
         return new OpenAPI()
                 .info(new Info()
                         .title("Customer Management System API")
@@ -17,4 +18,3 @@ public class SwaggerConfig {
                         .description("REST API for customer CRUD operations and Excel-based bulk import."));
     }
 }
-
