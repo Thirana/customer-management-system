@@ -13,7 +13,10 @@ Full-stack customer management system for a software engineer interview assignme
 - City lookup API under `/api/v1/cities`
 - Consistent `ApiResponse<T>` and `PageResponse<T>` response envelopes
 - Request ID support through `X-Request-ID` response header and MDC logging
+- One-line request completion logs with method, path, status, duration, and request ID
+- Lightweight service logs for customer create, update, delete, and expected business rejections
 - Swagger UI through springdoc-openapi
+- Importable Postman collection and local environment
 - Dev customer seed script for Postman and manual GET endpoint testing
 - Backend unit, MVC slice, repository, and context tests
 
@@ -28,6 +31,7 @@ customer-management-system/
 │   ├── README.md
 │   ├── scripts/
 │   └── src/
+├── docs/postman/            Importable Postman collection and environment
 ├── docker-compose.yml       Local MariaDB service
 ├── README.md                Full monorepo setup and reviewer entrypoint
 └── doc/                     Local planning docs, ignored by Git
@@ -157,15 +161,44 @@ All API responses use the same envelope shape:
 }
 ```
 
+Each completed HTTP request writes a body-free log line similar to:
+
+```text
+INFO [request-id] [http-nio-8080-exec-1] c.e.c.filter.RequestLoggingFilter - HTTP request completed method=GET path=/api/v1/customers status=200 durationMs=34
+```
+
+Request bodies and query strings are intentionally not logged because they can contain personal data.
+
 ## Postman Testing Flow
+
+Postman artifacts are available under `docs/postman/`:
+
+```text
+customer-management-api.postman_collection.json
+customer-management-local.postman_environment.json
+```
+
+Import both files into Postman and select the `Customer Management Local` environment. The collection parameterizes:
+
+- `baseUrl`
+- `customerId`
+- `missingCustomerId`
+- pagination and sorting query values
+- create/update scalar fields
+- `customerMobileNumbers` and `updatedCustomerMobileNumbers` as raw JSON arrays
+- `customerAddresses` and `updatedCustomerAddresses` as raw JSON arrays of address objects
+- `customerFamilyMemberIds` and `updatedCustomerFamilyMemberIds` as raw JSON arrays
+
+The create and update requests intentionally inject the array fields as raw JSON, not quoted strings. That lets you test one or many mobile numbers, addresses, and family member IDs by changing only the environment values.
 
 1. Start MariaDB.
 2. Run the dev seed script.
 3. Start the backend.
-4. Call `GET /api/v1/customers?page=0&size=20&sortBy=name&sortDir=asc`.
-5. Copy a customer `id` from the list response.
-6. Call `GET /api/v1/customers/{id}` to verify detail loading.
-7. Create, update, and delete a customer with a non-`DEV-NIC-*` NIC so seeded data stays easy to reset.
+4. Import the Postman collection and environment.
+5. Call `GET /api/v1/customers?page=0&size=20&sortBy=name&sortDir=asc`.
+6. Copy a customer `id` from the list response into the `customerId` environment variable.
+7. Call `GET /api/v1/customers/{id}` to verify detail loading.
+8. Create, update, and delete a customer with a non-`DEV-NIC-*` NIC so seeded data stays easy to reset.
 
 ## Backend Tests
 
@@ -207,6 +240,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 - `README.md` is the main monorepo setup and reviewer guide.
 - `backend/README.md` contains backend-specific operational and implementation notes.
+- `docs/postman/` contains the Postman collection and local environment for manual API testing.
 
 ## Troubleshooting
 
