@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomerService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
     private static final int MAX_PAGE_SIZE = 100;
     private static final Set<String> ALLOWED_SORT_FIELDS =
             new HashSet<String>(Arrays.asList("id", "name", "nicNumber", "dateOfBirth"));
@@ -70,6 +73,7 @@ public class CustomerService {
     @Transactional
     public CustomerResponseDTO createCustomer(CustomerCreateDTO request) {
         if (customerRepository.existsByNicNumber(request.getNicNumber())) {
+            LOGGER.warn("Customer create rejected because the NIC is already in use");
             throw new DuplicateNicException();
         }
 
@@ -79,7 +83,9 @@ public class CustomerService {
         Customer savedCustomer = customerRepository.save(customer);
         // Flush before mapping so generated child IDs are available in the response body.
         customerRepository.flush();
-        return customerMapper.toCustomerResponse(savedCustomer);
+        CustomerResponseDTO response = customerMapper.toCustomerResponse(savedCustomer);
+        LOGGER.info("Customer created customerId={}", response.getId());
+        return response;
     }
 
     @Transactional
@@ -88,11 +94,13 @@ public class CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException(id));
 
         if (customerRepository.existsByNicNumberAndIdNot(request.getNicNumber(), id)) {
+            LOGGER.warn("Customer update rejected because the NIC is already in use customerId={}", id);
             throw new DuplicateNicException();
         }
 
         applyUpdateFields(customer, request);
         customerRepository.flush();
+        LOGGER.info("Customer updated customerId={}", customer.getId());
         return customerMapper.toCustomerResponse(customer);
     }
 
@@ -103,6 +111,7 @@ public class CustomerService {
 
         customer.replaceFamilyMembers(new ArrayList<Customer>());
         customerRepository.delete(customer);
+        LOGGER.info("Customer deleted customerId={}", id);
     }
 
     private Customer loadDetail(Long id) {
@@ -153,9 +162,10 @@ public class CustomerService {
 
         for (AddressRequestDTO request : requests) {
             City city = cityRepository.findById(request.getCityId())
-                    .orElseThrow(() -> new MasterDataNotFoundException(
-                            "City not found with ID: " + request.getCityId()
-                    ));
+                    .orElseThrow(() -> {
+                        LOGGER.warn("Customer write rejected because the city was not found cityId={}", request.getCityId());
+                        return new MasterDataNotFoundException("City not found with ID: " + request.getCityId());
+                    });
 
             Address address = new Address();
             address.setAddressLine1(request.getAddressLine1());
@@ -174,6 +184,8 @@ public class CustomerService {
 
         Set<Long> uniqueIds = new HashSet<Long>(familyMemberIds);
         if (currentCustomerId != null && uniqueIds.contains(currentCustomerId)) {
+            LOGGER.warn("Customer update rejected because a customer cannot be their own family member customerId={}",
+                    currentCustomerId);
             throw new InvalidRequestException("A customer cannot be added as their own family member.");
         }
 
@@ -183,6 +195,8 @@ public class CustomerService {
                 .collect(Collectors.toSet());
         for (Long familyMemberId : uniqueIds) {
             if (!foundIds.contains(familyMemberId)) {
+                LOGGER.warn("Customer write rejected because a family member was not found familyMemberId={}",
+                        familyMemberId);
                 throw new CustomerNotFoundException(familyMemberId);
             }
         }
@@ -207,6 +221,7 @@ public class CustomerService {
             return "name";
         }
         if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            LOGGER.warn("Customer list rejected because an unsupported sort field was requested sortBy={}", sortBy);
             throw new InvalidRequestException("Unsupported sort field: " + sortBy);
         }
         return sortBy;

@@ -30,6 +30,9 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - Consistent `ApiResponse<T>` and `PageResponse<T>` envelopes
 - Global exception handling for expected API failures and validation errors
 - Request ID support with `X-Request-ID`
+- One-line request completion logs with method, path, status, duration, and request ID
+- Lightweight service logs for customer create, update, delete, and expected business rejections
+- Importable Postman collection and local environment under `../docs/postman/`
 - Dev seed script for customer records
 - Backend tests for repositories, services, controllers, filters, exceptions, and app context
 
@@ -140,6 +143,16 @@ Every request receives an `X-Request-ID` response header.
 
 If the client sends `X-Request-ID`, the backend uses that value. Otherwise the request filter generates a UUID. The value is stored in MDC so request-scoped logs can be correlated.
 
+Each completed HTTP request is logged once with method, path, response status, and duration:
+
+```text
+HTTP request completed method=GET path=/api/v1/customers status=200 durationMs=34
+```
+
+The log line includes the request ID through the Logback pattern. Request bodies and query strings are not logged because they can contain personal data.
+
+`CustomerService` also logs successful create, update, and delete operations with `customerId`, plus warning logs for expected business rejections such as duplicate NIC checks and invalid linked IDs.
+
 ## Dev Customer Seed
 
 From the repository root:
@@ -157,6 +170,39 @@ The script:
 - is safe to rerun
 
 Use this before Postman testing when you want predictable data for GET endpoints.
+
+## Postman Artifacts
+
+Import these two files from the repository root:
+
+```text
+docs/postman/customer-management-api.postman_collection.json
+docs/postman/customer-management-local.postman_environment.json
+```
+
+Select the `Customer Management Local` environment before sending requests.
+
+The environment parameterizes:
+
+- `baseUrl`
+- `customerId`
+- `missingCustomerId`
+- `page`, `size`, `sortBy`, and `sortDir`
+- create/update scalar fields
+- `customerMobileNumbers` and `updatedCustomerMobileNumbers` as raw JSON arrays
+- `customerAddresses` and `updatedCustomerAddresses` as raw JSON arrays of address objects
+- `customerFamilyMemberIds` and `updatedCustomerFamilyMemberIds` as raw JSON arrays
+
+The create and update requests use raw JSON variables for collection fields, so you can test multiple mobile numbers, addresses, and family member IDs without editing the request body structure.
+
+Suggested flow:
+
+1. Start MariaDB.
+2. Run `backend/scripts/seed-dev-customers.sh`.
+3. Start the backend.
+4. Send `List Customers`.
+5. Copy an `id` from the response into the `customerId` environment variable.
+6. Send detail, update, and delete requests as needed.
 
 ## Test
 
