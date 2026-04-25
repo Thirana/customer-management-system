@@ -11,6 +11,7 @@ Full-stack customer management system for a software engineer interview assignme
 - Customer domain model with mobile numbers, addresses, cities, countries, and family members
 - Customer CRUD API under `/api/v1/customers`
 - City lookup API under `/api/v1/cities`
+- Async Excel bulk import API under `/api/v1/customers/import`
 - Consistent `ApiResponse<T>` and `PageResponse<T>` response envelopes
 - Request ID support through `X-Request-ID` response header and MDC logging
 - One-line request completion logs with method, path, status, duration, and request ID
@@ -131,6 +132,13 @@ Master data endpoint:
 GET /api/v1/cities
 ```
 
+Bulk import endpoints:
+
+```text
+POST /api/v1/customers/import
+GET  /api/v1/customers/import/{jobId}/status
+```
+
 Create customer request example:
 
 ```json
@@ -169,6 +177,29 @@ INFO [request-id] [http-nio-8080-exec-1] c.e.c.filter.RequestLoggingFilter - HTT
 
 Request bodies and query strings are intentionally not logged because they can contain personal data.
 
+## Bulk Import Excel Format
+
+The bulk import endpoint accepts `.xlsx` files with this first-sheet header format:
+
+```text
+Column A: Name
+Column B: Date of Birth
+Column C: NIC Number
+Column D: Operation (optional: CREATE or UPDATE)
+```
+
+Rules:
+
+- `Name`, `Date of Birth`, and `NIC Number` are mandatory.
+- `Date of Birth` can be an Excel date cell or a `yyyy-MM-dd` string.
+- If `Operation` is omitted:
+  - the backend creates a customer when the NIC does not exist
+  - the backend updates the matching customer when the NIC already exists
+- If `Operation` is `CREATE`, an existing NIC becomes a row-level error.
+- If `Operation` is `UPDATE`, a missing NIC becomes a row-level error.
+- Invalid rows are skipped and reported in the status response.
+- The backend caps stored row errors to avoid unbounded memory growth.
+
 ## Postman Testing Flow
 
 Postman artifacts are available under `docs/postman/`:
@@ -183,6 +214,7 @@ Import both files into Postman and select the `Customer Management Local` enviro
 - `baseUrl`
 - `customerId`
 - `missingCustomerId`
+- `importJobId`
 - pagination and sorting query values
 - create/update scalar fields
 - `customerMobileNumbers` and `updatedCustomerMobileNumbers` as raw JSON arrays
@@ -199,6 +231,8 @@ The create and update requests intentionally inject the array fields as raw JSON
 6. Copy a customer `id` from the list response into the `customerId` environment variable.
 7. Call `GET /api/v1/customers/{id}` to verify detail loading.
 8. Create, update, and delete a customer with a non-`DEV-NIC-*` NIC so seeded data stays easy to reset.
+9. For bulk import, send `Start Customer Import`, choose an `.xlsx` file, and copy the returned `jobId` into `importJobId`.
+10. Poll `GET /api/v1/customers/import/{jobId}/status` until the job reaches `COMPLETED` or `FAILED`.
 
 ## Backend Tests
 
@@ -215,6 +249,7 @@ The current backend test suite covers:
 - global exception handling
 - repository queries and JPA mappings
 - customer service business rules
+- bulk import service, processor, and controller flows
 - customer and master data controller response shapes
 
 ## Commands

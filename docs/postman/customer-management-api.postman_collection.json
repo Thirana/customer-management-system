@@ -222,6 +222,78 @@
       ]
     },
     {
+      "name": "Bulk Import",
+      "item": [
+        {
+          "name": "Start Customer Import",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Request-ID",
+                "value": "{{requestId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Choose an .xlsx file with Name, Date of Birth, NIC Number, and optional Operation columns."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/import",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                "import"
+              ]
+            },
+            "description": "Uploads an Excel file and returns 202 Accepted with a job ID. Copy the returned jobId into the importJobId environment variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Import Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Request-ID",
+                "value": "{{requestId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/import/{{importJobId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                "import",
+                "{{importJobId}}",
+                "status"
+              ]
+            },
+            "description": "Polls the import job for current status, counts, progress, and capped row-level errors."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Error Examples",
       "item": [
         {

@@ -22,6 +22,7 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - Versioned API prefix: `/api/v1`
 - Customer CRUD endpoints
 - City lookup endpoint for address dropdowns
+- Async Excel bulk import endpoints with status polling
 - Flyway migrations for master data and customer tables
 - Seeded country and city master data
 - JPA entities with lazy relationships by default
@@ -35,8 +36,6 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - Importable Postman collection and local environment under `../docs/postman/`
 - Dev seed script for customer records
 - Backend tests for repositories, services, controllers, filters, exceptions, and app context
-
-Bulk Excel import is planned for the next backend phase.
 
 ## Profiles and Configuration
 
@@ -135,7 +134,33 @@ Master data endpoint:
 GET /api/v1/cities
 ```
 
+Bulk import endpoints:
+
+```text
+POST /api/v1/customers/import
+GET  /api/v1/customers/import/{jobId}/status
+```
+
 All endpoints return an `ApiResponse<T>` envelope. List endpoints return `PageResponse<T>` inside that envelope.
+
+## Bulk Import
+
+The bulk import endpoint accepts `.xlsx` files and processes them asynchronously. The upload endpoint returns `202 Accepted` with a `jobId`, and the status endpoint returns current progress, counts, and capped row-level errors.
+
+Expected header format on the first sheet:
+
+```text
+Name | Date of Birth | NIC Number | Operation
+```
+
+Column rules:
+
+- `Name`, `Date of Birth`, and `NIC Number` are mandatory.
+- `Date of Birth` supports Excel date cells and `yyyy-MM-dd` strings.
+- `Operation` is optional. Valid values are `CREATE` and `UPDATE`.
+- When `Operation` is omitted, the backend creates missing NICs and updates existing NICs.
+- Invalid rows are skipped and recorded as row-level errors.
+- The backend processes the file in batches and stores import progress in memory.
 
 ## Request ID Behavior
 
@@ -187,6 +212,7 @@ The environment parameterizes:
 - `baseUrl`
 - `customerId`
 - `missingCustomerId`
+- `importJobId`
 - `page`, `size`, `sortBy`, and `sortDir`
 - create/update scalar fields
 - `customerMobileNumbers` and `updatedCustomerMobileNumbers` as raw JSON arrays
@@ -194,6 +220,7 @@ The environment parameterizes:
 - `customerFamilyMemberIds` and `updatedCustomerFamilyMemberIds` as raw JSON arrays
 
 The create and update requests use raw JSON variables for collection fields, so you can test multiple mobile numbers, addresses, and family member IDs without editing the request body structure.
+The collection also includes import upload and status requests. For the upload request, choose an `.xlsx` file manually in Postman, then copy the returned `jobId` into `importJobId` before polling status.
 
 Suggested flow:
 
@@ -219,6 +246,7 @@ The current test suite covers:
 - global exception response mapping
 - repository lookups and custom queries
 - customer service create/update/delete rules
+- bulk import validation, parsing, batching, and status tracking
 - controller validation, status codes, and response envelopes
 
 ## Useful Commands
