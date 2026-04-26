@@ -86,11 +86,10 @@ export function CustomerFormPage({ mode }) {
       setErrorMessage("");
 
       try {
-        const [cityResponse, customerResponse] =
-          await Promise.all([
-            getCities(),
-            isEdit ? getCustomer(id) : Promise.resolve(null),
-          ]);
+        const [cityResponse, customerResponse] = await Promise.all([
+          getCities(),
+          isEdit ? getCustomer(id) : Promise.resolve(null),
+        ]);
 
         if (cancelled) {
           return;

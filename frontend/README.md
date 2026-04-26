@@ -12,7 +12,8 @@ The frontend currently provides:
 - shared application shell and UI primitives
 - backend-driven customer list view with pagination, sorting, and delete refresh
 - reusable customer create/edit form with dynamic mobile, address, city, and searchable family-member inputs
-- screen placeholders for detail and import flows
+- customer detail view with back, edit, delete, and linked family-member navigation
+- import screen placeholders for the later bulk-import phase
 
 ## Environment
 
@@ -55,8 +56,9 @@ The root route redirects to `/customers`.
 - list controls keep `page`, `size`, `sortBy`, and `sortDir` synchronized with the URL
 - `/customers/new` and `/customers/:id/edit` support shared create/edit submission flow
 - create/edit uses backend city lookup, debounced customer search for family-member selection, and backend validation messages
+- `/customers/:id` loads the full customer profile with mobile numbers, addresses, family-member links, and delete behavior
 - the shared shell, buttons, badges, sections, and list presentation use a warm-light product UI
-- import and detail routes are visually aligned and wired for later phases
+- `/customers/import` remains the placeholder route for the later import UI phase
 
 ## API Client
 

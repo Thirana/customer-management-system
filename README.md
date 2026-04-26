@@ -5,9 +5,9 @@ Customer Management System is a monorepo for a software engineer interview assig
 ## Current Status
 
 - Backend is implemented through Phase 7
-- Frontend Phase 3 create/edit flow is implemented
+- Frontend customer list, create/edit flow, and detail view are implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
-- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, and shared create/edit form flow
+- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, customer detail view, and shared create/edit form flow
 - Family-member selection now uses backend search instead of preloading the full customer registry
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
@@ -186,7 +186,7 @@ Detailed backend testing guides:
 - [Backend automated testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-automated-testing.md:1)
 - [Backend smoke testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-smoke-testing.md:1)
 
-Frontend Phase 1 currently uses manual verification only.
+Frontend currently uses manual verification only.
 
 ## Common Commands
 

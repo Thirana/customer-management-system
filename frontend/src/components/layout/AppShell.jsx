@@ -30,7 +30,7 @@ export function AppShell() {
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">Spring Boot API ready</StatusBadge>
-                <StatusBadge tone="neutral">Frontend Phase 2</StatusBadge>
+                <StatusBadge tone="neutral">Detail view ready</StatusBadge>
               </div>
 
               <div className="space-y-3">
