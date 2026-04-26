@@ -2,14 +2,16 @@
 
 This frontend is a Vite + React application inside the monorepo.
 
-Phase 1 provides:
+The frontend currently provides:
 
 - Vite React scaffold
+- Tailwind-based warm-light UI system
 - React Router route structure
 - Axios API client
 - shared API response helpers
-- base application layout and navigation
-- screen placeholders for customer list, create, detail, edit, and import flows
+- shared application shell and UI primitives
+- backend-driven customer list view with pagination, sorting, and delete refresh
+- screen placeholders for create, detail, edit, and import flows
 
 ## Environment
 
@@ -34,6 +36,8 @@ Default local URL:
 http://localhost:5173
 ```
 
+Keep the frontend on `http://localhost:5173` unless you also update the backend CORS origin. The backend default local CORS setting expects this exact origin.
+
 ## Available Routes
 
 - `/customers`
@@ -43,6 +47,13 @@ http://localhost:5173
 - `/customers/import`
 
 The root route redirects to `/customers`.
+
+## Current UI Coverage
+
+- `/customers` loads paginated customer summaries from the backend
+- list controls keep `page`, `size`, `sortBy`, and `sortDir` synchronized with the URL
+- the shared shell, buttons, badges, sections, and list presentation use a warm-light product UI
+- create, import, detail, and edit routes are visually aligned and wired for later phases
 
 ## API Client
 

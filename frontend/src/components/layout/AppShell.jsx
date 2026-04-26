@@ -1,97 +1,103 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
-
-const PAGE_METADATA = [
-  {
-    matches: (pathname) => pathname === '/customers',
-    title: 'Customers',
-    description: 'Browse, create, and manage customer records.',
-  },
-  {
-    matches: (pathname) => pathname === '/customers/new',
-    title: 'Create Customer',
-    description: 'Prepare a new customer profile with contact and relationship details.',
-  },
-  {
-    matches: (pathname) => pathname === '/customers/import',
-    title: 'Import Customers',
-    description: 'Upload Excel workbooks and monitor asynchronous import progress.',
-  },
-  {
-    matches: (pathname) => pathname.endsWith('/edit'),
-    title: 'Edit Customer',
-    description: 'Update a stored customer profile while keeping backend validation intact.',
-  },
-  {
-    matches: (pathname) => /^\/customers\/[^/]+$/.test(pathname),
-    title: 'Customer Detail',
-    description: 'Inspect a full customer profile, including nested contact and family data.',
-  },
-]
+import { NavLink, Outlet } from 'react-router-dom'
+import { cn } from '../../lib/cn.js'
+import { StatusBadge } from '../ui/StatusBadge.jsx'
 
 const NAV_ITEMS = [
-  { to: '/customers', label: 'Customers', end: true },
-  { to: '/customers/new', label: 'Create' },
-  { to: '/customers/import', label: 'Import' },
+  {
+    to: '/customers',
+    label: 'Customers',
+    end: true,
+    description: 'Browse the registry, review summaries, and move into customer detail or edit flows.',
+  },
+  {
+    to: '/customers/new',
+    label: 'Create',
+    description: 'Add a new customer record with contact details, addresses, and linked family members.',
+  },
+  {
+    to: '/customers/import',
+    label: 'Import',
+    description: 'Upload Excel workbooks and monitor asynchronous import progress from one place.',
+  },
 ]
 
-function resolvePageMetadata(pathname) {
-  return PAGE_METADATA.find((item) => item.matches(pathname)) ?? {
-    title: 'Customer Management System',
-    description: 'Frontend workspace for the customer management assignment.',
-  }
-}
-
 export function AppShell() {
-  const location = useLocation()
-  const page = resolvePageMetadata(location.pathname)
-
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand-block">
-          <p className="eyebrow">Assignment Workspace</p>
-          <h1 className="brand-title">Customer Management System</h1>
-        </div>
-        <div className="runtime-chip">Frontend Phase 1</div>
-      </header>
+    <div className="min-h-screen bg-[var(--color-page)] text-[var(--color-ink)]">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <header className="rounded-[32px] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-6 shadow-[var(--shadow-soft)] sm:px-7 sm:py-8">
+          <div className="flex flex-col gap-6">
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <StatusBadge tone="info">Spring Boot API ready</StatusBadge>
+                <StatusBadge tone="neutral">Frontend Phase 2</StatusBadge>
+              </div>
 
-      <div className="workspace">
-        <aside className="sidebar">
-          <nav className="nav-list" aria-label="Primary">
-            {NAV_ITEMS.map((item) => (
-              <NavLink
-                key={item.to}
-                className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
-                end={item.end}
-                to={item.to}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <section className="sidebar-panel">
-            <h2 className="sidebar-heading">Prepared Backend Surface</h2>
-            <ul className="sidebar-list">
-              <li>Customer CRUD</li>
-              <li>City lookup</li>
-              <li>Async import status polling</li>
-            </ul>
-          </section>
-        </aside>
-
-        <main className="main-panel">
-          <section className="page-header">
-            <div>
-              <p className="eyebrow">Frontend Scaffold</p>
-              <h2>{page.title}</h2>
+              <div className="space-y-3">
+                <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-[var(--color-ink)] sm:text-5xl">
+                  Customer Management System
+                </h1>
+                <p className="max-w-3xl text-base leading-7 text-[var(--color-ink-soft)]">
+                  Local reviewer workspace for customer CRUD, master data lookup, and Excel import
+                  verification. The interface stays quiet and utility-focused so the remaining
+                  frontend phases can reuse the same structure cleanly.
+                </p>
+              </div>
             </div>
-            <p className="page-description">{page.description}</p>
-          </section>
 
-          <section className="page-content">
-            <Outlet />
-          </section>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <p className="text-lg font-semibold tracking-tight text-[var(--color-ink)] sm:text-xl">
+                  Main workflows
+                </p>
+              </div>
+
+              <nav className="grid gap-3 md:grid-cols-3" aria-label="Primary">
+              {NAV_ITEMS.map((item) => (
+                <NavLink
+                  key={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'group rounded-[24px] border px-4 py-4 transition-colors',
+                      isActive
+                        ? 'border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-[inset_0_0_0_1px_rgba(214,201,178,0.28)]'
+                        : 'border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface)]',
+                    )
+                  }
+                  end={item.end}
+                  to={item.to}
+                >
+                  {({ isActive }) => (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-lg font-semibold text-[var(--color-ink)]">{item.label}</p>
+                        </div>
+                        <span
+                          className={cn(
+                            'mt-1 inline-flex size-2.5 shrink-0 rounded-full transition-colors',
+                            isActive
+                              ? 'bg-[#3ecf78]'
+                              : 'bg-[var(--color-border-strong)] group-hover:bg-[#3ecf78]',
+                          )}
+                          aria-hidden="true"
+                        ></span>
+                      </div>
+
+                      <p className="text-sm leading-6 text-[var(--color-ink-muted)]">
+                        {item.description}
+                      </p>
+                    </div>
+                  )}
+                </NavLink>
+              ))}
+              </nav>
+            </div>
+          </div>
+        </header>
+
+        <main className="mt-6 space-y-6">
+          <Outlet />
         </main>
       </div>
     </div>

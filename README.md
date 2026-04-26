@@ -5,9 +5,9 @@ Customer Management System is a monorepo for a software engineer interview assig
 ## Current Status
 
 - Backend is implemented through Phase 7
-- Frontend Phase 1 scaffold is implemented
+- Frontend Phase 2 customer list is implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
-- Vite React frontend with routing and shared API client foundation
+- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, and backend-driven customer list
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
 - Swagger UI at `http://localhost:8080/docs`
@@ -82,11 +82,13 @@ npm install
 npm run dev
 ```
 
-Frontend Phase 1 runs by default at:
+Frontend runs by default at:
 
 ```text
 http://localhost:5173
 ```
+
+Keep the frontend on `http://localhost:5173` during local development. The backend CORS default is aligned to that origin. If you change the frontend host or port, update `app.frontend.allowed-origin` in the backend config as well.
 
 ## Database
 

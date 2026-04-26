@@ -61,6 +61,14 @@ Username: cms_user
 Password: cms_password
 ```
 
+The default frontend CORS origin for local development is:
+
+```text
+http://localhost:5173
+```
+
+If the frontend runs on a different host or port, update `app.frontend.allowed-origin` so browser preflight requests do not fail with `403`.
+
 Custom application settings are validated through `AppProperties`. Invalid settings should fail application startup.
 
 ## Database and Migrations

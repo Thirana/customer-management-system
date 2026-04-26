@@ -1,14 +1,22 @@
 import { Link } from 'react-router-dom'
+import { Button } from '../components/ui/Button.jsx'
+import { PageSection } from '../components/ui/PageSection.jsx'
 
 export function NotFoundPage() {
   return (
-    <main className="not-found">
-      <p className="eyebrow">Route not found</p>
-      <h1>Page unavailable</h1>
-      <p>The requested frontend route is not part of the current customer management workspace.</p>
-      <Link className="primary-link" to="/customers">
-        Go to customers
-      </Link>
+    <main className="min-h-screen bg-[var(--color-page)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        <PageSection
+          actions={
+            <Button as={Link} to="/customers">
+              Go to customers
+            </Button>
+          }
+          description="The requested frontend route is not part of the current customer management workspace."
+          eyebrow="Route not found"
+          title="Page unavailable"
+        />
+      </div>
     </main>
   )
 }

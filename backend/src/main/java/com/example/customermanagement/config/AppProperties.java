@@ -50,7 +50,7 @@ public class AppProperties {
 
         // Used by CORS config; keep this specific instead of allowing all origins.
         @NotBlank
-        private String allowedOrigin = "http://localhost:3000";
+        private String allowedOrigin = "http://localhost:5173";
 
         public String getAllowedOrigin() {
             return allowedOrigin;
