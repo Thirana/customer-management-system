@@ -13,12 +13,12 @@ mvn test
 Expected result:
 
 - all backend tests pass
-- Flyway-backed schema assumptions remain valid
+- Flyway backed schema assumptions remain valid
 - request/response behavior, business rules, and import flow stay covered
 
 ## Current Coverage
 
-The current backend suite covers:
+The current backend test covers:
 
 - application context startup
 - request ID filter behavior
@@ -28,7 +28,7 @@ The current backend suite covers:
 - customer service business rules
 - city lookup and customer controller responses
 - bulk import service, processor, and controller flows
-- end-to-end CRUD integration flow on the test profile
+- end to end CRUD integration flow on the test profile
 
 ## Test Stack Notes
 

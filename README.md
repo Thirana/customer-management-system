@@ -1,14 +1,11 @@
 # Customer Management System
 
-Customer Management System is a monorepo for a software engineer interview assignment. The repository currently contains a Spring Boot backend, a Vite + React frontend scaffold, Docker-managed MariaDB for local development, Postman artifacts for API testing, and import tooling for Excel-based bulk customer onboarding.
+Customer Management System is a monorepo for a software engineer interview assignment. The repository currently contains a Spring Boot backend, a Vite + React frontend, Docker managed MariaDB for local development, Postman artifacts for API testing, and import tooling for Excel based bulk customer onboarding.
 
-## Current Status
+## Current Baseline
 
-- Backend is implemented through Phase 7
-- Frontend customer list, create/edit flow, detail view, and import UI are implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
-- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, customer detail view, shared create/edit form flow, and async import UI
-- Family-member selection now uses backend search instead of preloading the full customer registry
+- Vite React frontend with routing, Tailwind based UI, shared API client, backend driven customer list, customer detail view, shared create/edit form flow, and async import UI
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
 - Swagger UI at `http://localhost:8080/docs`
@@ -19,21 +16,21 @@ Customer Management System is a monorepo for a software engineer interview assig
 
 ```text
 customer-management-system/
-├── backend/                 Spring Boot API project
+├── backend/                 Spring Boot Backend
 │   ├── examples/
 │   ├── pom.xml
 │   ├── README.md
 │   ├── scripts/
 │   └── src/
-├── frontend/                Vite React application
+├── frontend/                Vite React Frontend
 │   ├── README.md
 │   ├── package.json
 │   └── src/
+├── docs/engineering/        Engineering reference notes for backend behavior and schema
 ├── docs/postman/            Importable Postman collection and environment
-├── docs/testing/            Backend automated and smoke-test guides
+├── docs/testing/            Backend automated and smoke test guides
 ├── docker-compose.yml       Local MariaDB service
-├── README.md                Monorepo setup and reviewer entrypoint
-└── doc/                     Local planning docs, ignored by Git
+├── README.md                Monorepo setup and welcome guide
 ```
 
 ## Prerequisites
@@ -105,6 +102,10 @@ Password: cms_password
 
 Flyway owns schema changes. Hibernate runs with `ddl-auto: validate` for real database profiles.
 
+If large import tests leave too much local data behind, run `docker compose down -v` from the repository root. That removes the MariaDB volume so the next startup begins with a clean database and fresh Flyway seed data.
+
+Assignment required DDL and DML are provided through Flyway migrations under `backend/src/main/resources/db/migration/`. The schema and index migrations act as DDL, and the seed data migration acts as DML.
+
 ## API Overview
 
 Base URL:
@@ -149,6 +150,8 @@ Committed sample workbook:
 ```text
 backend/examples/customers-import-sample.xlsx
 ```
+
+If you upload the same sample workbook repeatedly on the same local database, the create row can start failing with a duplicate NIC error. Reset the local database with `docker compose down -v` when you want to replay the sample from a clean state.
 
 ### Script Compatibility
 
@@ -209,6 +212,7 @@ From the repository root:
 docker compose up -d mariadb
 docker compose ps
 docker compose down
+docker compose down -v
 backend/scripts/seed-dev-customers.sh
 backend/scripts/generate-import-workbook.sh --output=backend/examples/generated/customers-import-10000.xlsx --rows=10000 --mode=mixed
 ```
@@ -230,8 +234,9 @@ npm run build
 
 ## Documentation Map
 
-- `README.md` is the main monorepo setup and reviewer guide
-- `backend/README.md` contains backend-specific implementation and operational notes
-- `frontend/README.md` contains frontend-specific setup and route notes
+- `README.md` is the main monorepo setup and welcome guide
+- `backend/README.md` contains backend specific implementation and operational notes
+- `frontend/README.md` contains frontend specific setup and route notes
+- `docs/engineering/` contains engineering reference notes for backend runtime, write flows, and schema structure
 - `docs/postman/` contains Postman artifacts for manual API testing
-- `docs/testing/` contains backend automated and smoke-test guides
+- `docs/testing/` contains backend automated and smoke test guides

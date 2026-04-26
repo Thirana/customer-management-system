@@ -5,15 +5,15 @@ This frontend is a Vite + React application inside the monorepo.
 The frontend currently provides:
 
 - Vite React scaffold
-- Tailwind-based warm-light UI system
+- Tailwind based UI system
 - React Router route structure
 - Axios API client
 - shared API response helpers
 - shared application shell and UI primitives
-- backend-driven customer list view with pagination, sorting, and delete refresh
-- reusable customer create/edit form with dynamic mobile, address, city, and searchable family-member inputs
-- customer detail view with back, edit, delete, and linked family-member navigation
-- bulk import screen with `.xlsx` upload, async status polling, progress summary, and row-level errors
+- backend driven customer list view with pagination, sorting,search, and delete refresh
+- reusable customer create/edit form with dynamic mobile, address, city, and searchable family member inputs
+- customer detail view with back, edit, delete, and linked family member navigation
+- bulk import screen with `.xlsx` upload, async status polling, progress summary, and row level errors
 
 ## Environment
 
@@ -55,10 +55,9 @@ The root route redirects to `/customers`.
 - `/customers` loads paginated customer summaries from the backend
 - list controls keep `page`, `size`, `sortBy`, and `sortDir` synchronized with the URL
 - `/customers/new` and `/customers/:id/edit` support shared create/edit submission flow
-- create/edit uses backend city lookup, debounced customer search for family-member selection, and backend validation messages
-- `/customers/:id` loads the full customer profile with mobile numbers, addresses, family-member links, and delete behavior
+- create/edit uses backend city lookup, debounced customer search for family member selection, and backend validation messages
+- `/customers/:id` loads the full customer profile with mobile numbers, addresses, family member links, and delete behavior
 - `/customers/import` uploads `.xlsx` workbooks, polls import status every 2 seconds, and shows completion counts plus row-level errors
-- the shared shell, buttons, badges, sections, and list presentation use a warm-light product UI
 
 ## API Client
 
@@ -73,15 +72,16 @@ The shared API client is prepared for these backend operations:
 - upload import workbook
 - poll import status
 
-The client matches the backend `ApiResponse<T>` envelope and surfaces backend validation or failure messages in a frontend-friendly format.
+The client matches the backend `ApiResponse<T>` envelope and surfaces backend validation or failure messages in a frontend friendly format.
 
 ## Import Notes
 
 - The import page accepts `.xlsx` files only
-- The expected first-sheet columns are `Name`, `Date of Birth`, `NIC Number`, and optional `Operation`
+- The expected sheet columns are `Name`, `Date of Birth`, `NIC Number`, and optional `Operation`
 - `Operation` supports `CREATE` and `UPDATE`
 - The page polls the backend import job every 2 seconds until it reaches `COMPLETED` or `FAILED`
 - A committed sample workbook is available at `backend/examples/customers-import-sample.xlsx`
+- Reusing the same sample workbook on the same local database can show a duplicate NIC error for the create row. Run `docker compose down -v` from the repository root when you want a clean local import reset.
 
 ## Manual Smoke Checklist
 

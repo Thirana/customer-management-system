@@ -14,7 +14,7 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - MariaDB for local development
 - H2 for repository and context tests
 - Lombok
-- springdoc-openapi Swagger UI
+- Springdoc openapi Swagger
 - JUnit 5
 
 ## Current Baseline
@@ -31,7 +31,7 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - Consistent `ApiResponse<T>` and `PageResponse<T>` envelopes
 - Global exception handling for expected API failures and validation errors
 - Request ID support with `X-Request-ID`
-- One-line request completion logs with method, path, status, duration, and request ID
+- One line request completion logs with method, path, status, duration, and request ID
 - Lightweight service logs for customer create, update, delete, and expected business rejections
 - Importable Postman collection and local environment under `../docs/postman/`
 - Dev seed script for customer records
@@ -97,6 +97,8 @@ From the repository root, start MariaDB:
 ```bash
 docker compose up -d mariadb
 ```
+
+If heavy import testing leaves too many local records behind, run `docker compose down -v` from the repository root. That removes the MariaDB volume so the next backend start recreates the schema and seed data from Flyway migrations.
 
 From `backend/`, start the API:
 
@@ -187,6 +189,7 @@ It includes:
 - one invalid row for row-level error testing
 
 Run the dev seed script before uploading the sample workbook so the auto-update row can resolve an existing customer.
+If you rerun the same sample workbook on the same local database, the create row can eventually fail with a duplicate NIC error. Use `docker compose down -v` when you want to replay the sample from a clean local state.
 
 ### Large Workbook Generator
 

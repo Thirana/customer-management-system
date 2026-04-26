@@ -26,8 +26,6 @@ The backend currently uses these main business tables:
 
 Flyway also maintains its own schema history table for migration tracking.
 
-The business schema is intentionally small and explicit. It models one customer domain with supporting master data, rather than spreading the design across many loosely related tables.
-
 ## Relationship Model
 
 The current relationship model is:
@@ -45,7 +43,7 @@ Operationally, `customers` is the root record. Mobile numbers, addresses, and fa
 
 ### Countries
 
-The `countries` table is the top-level location reference table.
+The `countries` table is the top level location reference table.
 
 It stores:
 
@@ -55,11 +53,11 @@ It stores:
 Its role is simple but important:
 
 - it keeps location reference data consistent
-- it prevents country values from being duplicated as free-text strings in customer records
+- it prevents country values from being duplicated as free text strings in customer records
 
 ### Cities
 
-The `cities` table stores individual cities and links each city to one country.
+The `cities` table stores individual cities and links each city to one and only one country.
 
 Important design choices:
 
@@ -67,7 +65,7 @@ Important design choices:
 - the same city name cannot be duplicated within the same country
 - every city must belong to a valid country
 
-The project also seeds a useful set of countries and cities through Flyway so the application can support dropdown-based address entry immediately.
+The project also seeds a useful set of countries and cities through Flyway so the application can support dropdown based address entry immediately.
 
 Operational effect:
 
@@ -144,7 +142,7 @@ The schema uses a small set of important constraints to protect core business ru
 Operational effect:
 
 - the schema enforces one customer identity per NIC
-- duplicate customer creation cannot succeed even if application-layer validation is bypassed
+- duplicate customer creation cannot succeed even if application layer validation is bypassed
 
 ### Required foreign keys
 
@@ -160,7 +158,7 @@ Operational effect:
 
 - child rows cannot point to missing customers, missing cities, or missing countries
 
-### Self-reference protection in family links
+### Self reference protection in family links
 
 The `customer_family` table includes a check to prevent a customer from being linked to itself as a family member.
 
@@ -170,7 +168,7 @@ Operational effect:
 
 ### Cascading child cleanup
 
-Customer-owned child records are configured to delete with the parent customer where appropriate.
+Customer owned child records are configured to delete with the parent customer where appropriate.
 
 Operational effect:
 

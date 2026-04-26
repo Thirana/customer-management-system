@@ -13,7 +13,7 @@ The focus is:
 - Swagger exposure
 - async import runtime support
 
-The goal is to explain what has to succeed before the backend starts accepting traffic, and what guarantees exist once startup completes.
+The goal is to explain what has to succeed before the backend starts accepting traffic, and what guarantees once startup completes.
 
 ## Startup Sequence
 
@@ -36,7 +36,7 @@ Operational effect:
 
 ## Configuration Loading
 
-The backend uses one shared base config plus profile-specific overrides.
+The backend uses one shared base config plus profile specific overrides.
 
 Current configuration files are:
 
@@ -54,7 +54,7 @@ Current configuration files are:
 - import settings
 - async executor settings
 
-The profile files then supply environment-specific database and logging values.
+The profile files then supply environment specific database and logging values.
 
 The application also binds custom properties under the `app.*` prefix through `AppProperties`.
 
@@ -78,14 +78,14 @@ Database startup behavior follows a strict ownership model:
 
 - Flyway owns schema creation and change history
 - Hibernate validates mappings against the existing schema
-- Hibernate does not create or update production-style tables automatically
+- Hibernate does not create or update tables automatically
 
 In the `dev` and `prod` profiles, the backend depends on a working MariaDB connection before startup can complete.
 
 Operational effect:
 
 - if the database is unavailable, the app does not start
-- if the entity mappings drift from the migration-defined schema, the app does not start
+- if the entity mappings drift from the migration defined schema, the app does not start
 - once the app is listening, the database connection and schema validation steps have already succeeded
 
 ## Shared Runtime Pipeline
@@ -96,7 +96,7 @@ That pipeline includes:
 
 - CORS rules for `/api/**`
 - request ID generation or propagation through `X-Request-ID`
-- one-line request completion logging
+- one line request completion logging
 - Jackson configuration for readable JSON date handling
 - global exception handling with consistent API response envelopes
 
@@ -111,7 +111,7 @@ The same value is returned in the response header and stored in the logging cont
 
 Operational effect:
 
-- individual API requests can be traced reliably across logs and client-side debugging
+- individual API requests can be traced reliably across logs and client side debugging
 
 ### Request completion logging
 
@@ -130,7 +130,7 @@ Operational effect:
 
 ### JSON and error handling behavior
 
-Jackson is configured to keep dates as readable ISO-style strings instead of numeric timestamps.
+Jackson is configured to keep dates as readable ISO style strings instead of numeric timestamps.
 
 The global exception handler normalizes:
 
@@ -193,7 +193,7 @@ Once the backend has completed startup and is accepting traffic, the following a
 - JSON date serialization is consistent
 - exception responses are normalized
 - Swagger UI is exposed at `/docs`
-- async import infrastructure is ready
+- async import is ready
 
 This creates a strong startup contract.
 
