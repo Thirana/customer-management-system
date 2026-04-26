@@ -1,51 +1,42 @@
 # Customer Management System
 
-Full-stack customer management system for a software engineer interview assignment. The repository is structured as a monorepo with a Spring Boot backend, a planned React frontend, Docker-managed MariaDB, Flyway migrations, Swagger API documentation, and backend automated tests.
+Customer Management System is a monorepo for a software engineer interview assignment. The repository currently contains a Spring Boot backend, Docker-managed MariaDB for local development, Postman artifacts for API testing, and import tooling for Excel-based bulk customer onboarding. The frontend is still pending.
 
-## Current Baseline
+## Current Status
 
-- Monorepo with backend Maven project under `backend/`
-- Docker Compose MariaDB 10.6 for local development
-- Flyway migration-only schema workflow
-- Spring Boot 2.7.18 backend targeting Java 8
-- Customer domain model with mobile numbers, addresses, cities, countries, and family members
-- Customer CRUD API under `/api/v1/customers`
-- City lookup API under `/api/v1/cities`
-- Async Excel bulk import API under `/api/v1/customers/import`
-- Consistent `ApiResponse<T>` and `PageResponse<T>` response envelopes
-- Request ID support through `X-Request-ID` response header and MDC logging
-- One-line request completion logs with method, path, status, duration, and request ID
-- Lightweight service logs for customer create, update, delete, and expected business rejections
-- Swagger UI through springdoc-openapi
-- Importable Postman collection and local environment
-- Dev customer seed script for Postman and manual GET endpoint testing
-- Backend unit, MVC slice, repository, and context tests
-
-The frontend is planned but has not been scaffolded yet.
+- Backend is implemented through Phase 7
+- Spring Boot 2.7.18 API with Java 8 target compatibility
+- MariaDB + Flyway schema management
+- Customer CRUD, city lookup, and async Excel import APIs
+- Swagger UI at `http://localhost:8080/docs`
+- Postman collection and local environment under `docs/postman/`
+- Backend automated tests, sample import workbook, and smoke-test guidance
 
 ## Repository Structure
 
 ```text
 customer-management-system/
 ├── backend/                 Spring Boot API project
+│   ├── examples/
 │   ├── pom.xml
 │   ├── README.md
 │   ├── scripts/
 │   └── src/
 ├── docs/postman/            Importable Postman collection and environment
+├── docs/testing/            Backend automated and smoke-test guides
 ├── docker-compose.yml       Local MariaDB service
-├── README.md                Full monorepo setup and reviewer entrypoint
+├── README.md                Monorepo setup and reviewer entrypoint
 └── doc/                     Local planning docs, ignored by Git
 ```
 
 ## Prerequisites
 
-- Java 8 compatible target support
+- Java
 - Maven
 - Docker Desktop or another running Docker daemon
 - Postman or another API client for manual testing
 
-The backend currently runs locally on Java 21 as well, while Maven compiles the project with Java 8 target compatibility.
+The backend compiles with Java 8 target compatibility and runs locally on modern JDKs such as Java 21.
 
 ## Local Setup
 
@@ -55,7 +46,7 @@ The backend currently runs locally on Java 21 as well, while Maven compiles the 
 docker compose up -d mariadb
 ```
 
-2. Confirm the database container is healthy.
+2. Confirm the container is running.
 
 ```bash
 docker compose ps
@@ -68,13 +59,13 @@ cd backend
 mvn spring-boot:run
 ```
 
-The default active profile is `dev`. Flyway runs automatically on startup and applies the schema plus master data.
-
-4. Open Swagger.
+4. Open Swagger UI.
 
 ```text
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/docs
 ```
+
+The default active profile is `dev`. Flyway runs automatically on startup and applies the schema plus master data.
 
 ## Database
 
@@ -88,27 +79,9 @@ Username: cms_user
 Password: cms_password
 ```
 
-Flyway owns schema changes. Hibernate is configured with `ddl-auto: validate` so the application fails fast if entity mappings drift from the migration scripts.
+Flyway owns schema changes. Hibernate runs with `ddl-auto: validate` for real database profiles.
 
-## Demo Data
-
-Use the dev customer seed script when you want data for list/detail endpoint testing.
-
-```bash
-backend/scripts/seed-dev-customers.sh
-```
-
-What it does:
-
-- deletes only customers whose NIC starts with `DEV-NIC-`
-- inserts 8 deterministic dev customers
-- adds mobile numbers and addresses
-- adds a few customer family links
-- prints the inserted customers
-
-This script assumes the MariaDB container is running. It is safe to rerun.
-
-## API Endpoints
+## API Overview
 
 Base URL:
 
@@ -116,143 +89,78 @@ Base URL:
 http://localhost:8080
 ```
 
-Customer endpoints:
+Available backend endpoints:
 
 ```text
-GET    /api/v1/customers?page=0&size=10&sortBy=name&sortDir=asc
+GET    /api/v1/cities
+GET    /api/v1/customers
 GET    /api/v1/customers/{id}
 POST   /api/v1/customers
 PUT    /api/v1/customers/{id}
 DELETE /api/v1/customers/{id}
+POST   /api/v1/customers/import
+GET    /api/v1/customers/import/{jobId}/status
 ```
 
-Master data endpoint:
+For backend-specific API behavior, request/response details, logging notes, and import rules, see [backend/README.md](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/backend/README.md:1).
 
-```text
-GET /api/v1/cities
-```
+## Dev Scripts and Import Files
 
-Bulk import endpoints:
-
-```text
-POST /api/v1/customers/import
-GET  /api/v1/customers/import/{jobId}/status
-```
-
-Create customer request example:
-
-```json
-{
-  "name": "Nimal Perera",
-  "dateOfBirth": "1990-01-01",
-  "nicNumber": "NIC-POSTMAN-001",
-  "mobileNumbers": ["0771234567"],
-  "addresses": [
-    {
-      "addressLine1": "Line 1",
-      "addressLine2": "Line 2",
-      "cityId": 1
-    }
-  ],
-  "familyMemberIds": []
-}
-```
-
-All API responses use the same envelope shape:
-
-```json
-{
-  "success": true,
-  "data": {},
-  "message": "Operation completed successfully.",
-  "timestamp": "2026-04-25T10:00:00"
-}
-```
-
-Each completed HTTP request writes a body-free log line similar to:
-
-```text
-INFO [request-id] [http-nio-8080-exec-1] c.e.c.filter.RequestLoggingFilter - HTTP request completed method=GET path=/api/v1/customers status=200 durationMs=34
-```
-
-Request bodies and query strings are intentionally not logged because they can contain personal data.
-
-## Bulk Import Excel Format
-
-The bulk import endpoint accepts `.xlsx` files with this first-sheet header format:
-
-```text
-Column A: Name
-Column B: Date of Birth
-Column C: NIC Number
-Column D: Operation (optional: CREATE or UPDATE)
-```
-
-Rules:
-
-- `Name`, `Date of Birth`, and `NIC Number` are mandatory.
-- `Date of Birth` can be an Excel date cell or a `yyyy-MM-dd` string.
-- If `Operation` is omitted:
-  - the backend creates a customer when the NIC does not exist
-  - the backend updates the matching customer when the NIC already exists
-- If `Operation` is `CREATE`, an existing NIC becomes a row-level error.
-- If `Operation` is `UPDATE`, a missing NIC becomes a row-level error.
-- Invalid rows are skipped and reported in the status response.
-- The backend caps stored row errors to avoid unbounded memory growth.
-
-## Postman Testing Flow
-
-Postman artifacts are available under `docs/postman/`:
-
-```text
-customer-management-api.postman_collection.json
-customer-management-local.postman_environment.json
-```
-
-Import both files into Postman and select the `Customer Management Local` environment. The collection parameterizes:
-
-- `baseUrl`
-- `customerId`
-- `missingCustomerId`
-- `importJobId`
-- pagination and sorting query values
-- create/update scalar fields
-- `customerMobileNumbers` and `updatedCustomerMobileNumbers` as raw JSON arrays
-- `customerAddresses` and `updatedCustomerAddresses` as raw JSON arrays of address objects
-- `customerFamilyMemberIds` and `updatedCustomerFamilyMemberIds` as raw JSON arrays
-
-The create and update requests intentionally inject the array fields as raw JSON, not quoted strings. That lets you test one or many mobile numbers, addresses, and family member IDs by changing only the environment values.
-
-1. Start MariaDB.
-2. Run the dev seed script.
-3. Start the backend.
-4. Import the Postman collection and environment.
-5. Call `GET /api/v1/customers?page=0&size=20&sortBy=name&sortDir=asc`.
-6. Copy a customer `id` from the list response into the `customerId` environment variable.
-7. Call `GET /api/v1/customers/{id}` to verify detail loading.
-8. Create, update, and delete a customer with a non-`DEV-NIC-*` NIC so seeded data stays easy to reset.
-9. For bulk import, send `Start Customer Import`, choose an `.xlsx` file, and copy the returned `jobId` into `importJobId`.
-10. Poll `GET /api/v1/customers/import/{jobId}/status` until the job reaches `COMPLETED` or `FAILED`.
-
-## Backend Tests
-
-Run backend tests from `backend/`.
+Seed dev customers:
 
 ```bash
-mvn test
+backend/scripts/seed-dev-customers.sh
 ```
 
-The current backend test suite covers:
+Generate a large import workbook:
 
-- application context startup
-- request ID filter behavior
-- global exception handling
-- repository queries and JPA mappings
-- customer service business rules
-- bulk import service, processor, and controller flows
-- customer and master data controller response shapes
+```bash
+backend/scripts/generate-import-workbook.sh --output=backend/examples/generated/customers-import-10000.xlsx --rows=10000 --mode=mixed
+```
 
-## Commands
+Committed sample workbook:
+
+```text
+backend/examples/customers-import-sample.xlsx
+```
+
+### Script Compatibility
+
+The shell script entrypoints work on:
+
+- macOS
+- Linux
+- Windows with Git Bash or WSL
+
+They do not run cleanly from plain Command Prompt or PowerShell.
+
+The Excel generator core is [generate_import_workbook.py](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/backend/scripts/generate_import_workbook.py:1), which uses only Python standard library modules. That script is cross-platform if Python 3 is installed.
+
+Windows example:
+
+```powershell
+python backend/scripts/generate_import_workbook.py --output=backend/examples/generated/test.xlsx --rows=1000 --mode=mixed
+```
+
+## Postman
+
+Postman artifacts are available under:
+
+```text
+docs/postman/customer-management-api.postman_collection.json
+docs/postman/customer-management-local.postman_environment.json
+```
+
+Import both files and select the `Customer Management Local` environment before sending requests.
+
+## Testing
+
+Detailed backend testing guides:
+
+- [Backend automated testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-automated-testing.md:1)
+- [Backend smoke testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-smoke-testing.md:1)
+
+## Common Commands
 
 From the repository root:
 
@@ -261,6 +169,7 @@ docker compose up -d mariadb
 docker compose ps
 docker compose down
 backend/scripts/seed-dev-customers.sh
+backend/scripts/generate-import-workbook.sh --output=backend/examples/generated/customers-import-10000.xlsx --rows=10000 --mode=mixed
 ```
 
 From `backend/`:
@@ -268,19 +177,11 @@ From `backend/`:
 ```bash
 mvn test
 mvn spring-boot:run
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 ## Documentation Map
 
-- `README.md` is the main monorepo setup and reviewer guide.
-- `backend/README.md` contains backend-specific operational and implementation notes.
-- `docs/postman/` contains the Postman collection and local environment for manual API testing.
-
-## Troubleshooting
-
-- If MariaDB does not start, make sure Docker Desktop is running and retry `docker compose up -d mariadb`.
-- If the backend cannot connect to MariaDB, confirm `docker compose ps` shows the `mariadb` service as healthy.
-- If port `8080` is already in use, stop the existing process or change `server.port` temporarily.
-- If Swagger does not load, confirm the backend started successfully and open `http://localhost:8080/swagger-ui.html`.
-- If the seed script fails, confirm the MariaDB container is running and the database credentials match `docker-compose.yml`.
+- `README.md` is the main monorepo setup and reviewer guide
+- `backend/README.md` contains backend-specific implementation and operational notes
+- `docs/postman/` contains Postman artifacts for manual API testing
+- `docs/testing/` contains backend automated and smoke-test guides

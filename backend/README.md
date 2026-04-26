@@ -35,7 +35,8 @@ Spring Boot REST API for the Customer Management System interview assignment. Th
 - Lightweight service logs for customer create, update, delete, and expected business rejections
 - Importable Postman collection and local environment under `../docs/postman/`
 - Dev seed script for customer records
-- Backend tests for repositories, services, controllers, filters, exceptions, and app context
+- Sample import workbook and large workbook generator
+- Backend tests for repositories, services, controllers, filters, exceptions, integration flow, and app context
 
 ## Profiles and Configuration
 
@@ -104,7 +105,7 @@ http://localhost:8080
 Swagger UI:
 
 ```text
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/docs
 ```
 
 ## API Endpoints
@@ -161,6 +162,41 @@ Column rules:
 - When `Operation` is omitted, the backend creates missing NICs and updates existing NICs.
 - Invalid rows are skipped and recorded as row-level errors.
 - The backend processes the file in batches and stores import progress in memory.
+
+### Sample Workbook
+
+Quick reviewer-friendly workbook:
+
+```text
+examples/customers-import-sample.xlsx
+```
+
+It includes:
+
+- one `CREATE` row
+- one blank-operation row targeting a seeded `DEV-NIC-*` customer
+- one invalid row for row-level error testing
+
+Run the dev seed script before uploading the sample workbook so the auto-update row can resolve an existing customer.
+
+### Large Workbook Generator
+
+Generate larger workbooks with:
+
+```bash
+backend/scripts/generate-import-workbook.sh --output=backend/examples/generated/customers-import-10000.xlsx --rows=10000 --mode=mixed
+```
+
+Arguments:
+
+```text
+--output=<path>                         required
+--rows=<count>                         optional, default 1000
+--mode=create-only|auto|mixed          optional, default mixed
+--include-invalid-row=true|false       optional, default false
+```
+
+`mixed` mode is intended for use after `backend/scripts/seed-dev-customers.sh`, because its auto/update rows target seeded `DEV-NIC-*` records.
 
 ## Request ID Behavior
 
@@ -230,6 +266,8 @@ Suggested flow:
 4. Send `List Customers`.
 5. Copy an `id` from the response into the `customerId` environment variable.
 6. Send detail, update, and delete requests as needed.
+7. Upload `backend/examples/customers-import-sample.xlsx`.
+8. Copy the returned `jobId` into `importJobId` and poll import status.
 
 ## Test
 
@@ -247,7 +285,20 @@ The current test suite covers:
 - repository lookups and custom queries
 - customer service create/update/delete rules
 - bulk import validation, parsing, batching, and status tracking
+- end-to-end CRUD integration flow on the test profile
 - controller validation, status codes, and response envelopes
+
+## Final Backend Smoke Check
+
+1. Start MariaDB with `docker compose up -d mariadb`.
+2. Run `backend/scripts/seed-dev-customers.sh`.
+3. Start the backend.
+4. Open Swagger UI.
+5. Verify CRUD flow from Swagger or Postman.
+6. Upload `examples/customers-import-sample.xlsx`.
+7. Poll the import status endpoint to completion.
+8. Check that responses include `X-Request-ID`.
+9. Check that logs contain request IDs but no sensitive customer payload values.
 
 ## Useful Commands
 
@@ -258,6 +309,7 @@ docker compose up -d mariadb
 docker compose ps
 docker compose down
 backend/scripts/seed-dev-customers.sh
+backend/scripts/generate-import-workbook.sh --output=backend/examples/generated/customers-import-10000.xlsx --rows=10000 --mode=mixed
 ```
 
 From `backend/`:
@@ -274,4 +326,5 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 - If startup fails with Flyway validation errors, check whether migration files were modified after being applied to the local database.
 - If startup fails with Hibernate validation errors, entity mappings no longer match the Flyway schema.
 - If port `8080` is already used, stop the existing process before running the backend.
-- If Swagger is not available, verify the backend started and open `http://localhost:8080/swagger-ui.html`.
+- If Swagger is not available, verify the backend started and open `http://localhost:8080/docs`.
+- If mixed-mode import rows fail to update, run `backend/scripts/seed-dev-customers.sh` before uploading the workbook.

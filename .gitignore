@@ -26,6 +26,7 @@ target/
 
 # Spring Boot
 backend/logs/
+backend/examples/generated/
 
 # Node / React / Vite
 node_modules/
