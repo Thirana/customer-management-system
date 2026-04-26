@@ -8,6 +8,7 @@ export class ApiClientError extends Error {
   }
 }
 
+// The backend wraps every success and failure in ApiResponse<T>, so normalize that once here.
 export function unwrapApiResponse(response) {
   const payload = response?.data
 
@@ -26,6 +27,7 @@ export function unwrapApiResponse(response) {
   return payload.data
 }
 
+// Collapse transport errors and backend-declared business errors into one predictable frontend error type.
 export function toApiClientError(error) {
   if (error instanceof ApiClientError) {
     return error

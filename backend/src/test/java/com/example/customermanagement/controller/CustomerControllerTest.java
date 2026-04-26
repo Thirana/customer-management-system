@@ -20,6 +20,7 @@ import com.example.customermanagement.dto.response.CustomerResponseDTO;
 import com.example.customermanagement.dto.response.CustomerSummaryDTO;
 import com.example.customermanagement.dto.response.PageResponse;
 import com.example.customermanagement.exception.CustomerNotFoundException;
+import com.example.customermanagement.exception.InvalidRequestException;
 import com.example.customermanagement.service.CustomerService;
 import com.example.customermanagement.service.MasterDataService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +63,7 @@ class CustomerControllerTest {
                         1
                 ))
         ));
-        when(customerService.listCustomers(1, 5, "nicNumber", "desc")).thenReturn(page);
+        when(customerService.listCustomers(1, 5, "nicNumber", "desc", null)).thenReturn(page);
 
         mockMvc.perform(get(ApiConstants.API_V1 + "/customers")
                         .param("page", "1")
@@ -75,7 +76,30 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.data.content[0].nicNumber").value("NIC-001"))
                 .andExpect(jsonPath("$.data.page").value(0));
 
-        verify(customerService).listCustomers(1, 5, "nicNumber", "desc");
+        verify(customerService).listCustomers(1, 5, "nicNumber", "desc", null);
+    }
+
+    @Test
+    void listCustomersPassesOptionalSearchParameter() throws Exception {
+        PageResponse<CustomerSummaryDTO> page = PageResponse.from(new PageImpl<CustomerSummaryDTO>(
+                Collections.singletonList(new CustomerSummaryDTO(
+                        2L,
+                        "Kasun Silva",
+                        LocalDate.of(1991, 2, 2),
+                        "NIC-SEARCH-001",
+                        0,
+                        0
+                ))
+        ));
+        when(customerService.listCustomers(0, 10, "name", "asc", "Kasun")).thenReturn(page);
+
+        mockMvc.perform(get(ApiConstants.API_V1 + "/customers")
+                        .param("search", "Kasun"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content[0].name").value("Kasun Silva"));
+
+        verify(customerService).listCustomers(0, 10, "name", "asc", "Kasun");
     }
 
     @Test
@@ -124,6 +148,21 @@ class CustomerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(3));
+    }
+
+    @Test
+    void createCustomerReturnsBadRequestForInvalidMobileNumber() throws Exception {
+        CustomerCreateDTO request = validCreateRequest("NIC-003-A");
+        request.setMobileNumbers(Collections.singletonList("1234"));
+        when(customerService.createCustomer(org.mockito.ArgumentMatchers.any(CustomerCreateDTO.class)))
+                .thenThrow(new InvalidRequestException("Mobile numbers must contain exactly 10 digits."));
+
+        mockMvc.perform(post(ApiConstants.API_V1 + "/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Mobile numbers must contain exactly 10 digits."));
     }
 
     @Test

@@ -12,6 +12,7 @@ export const apiClient = axios.create({
   },
 })
 
+// Attach a request id to every browser call so backend request logs stay traceable during manual review.
 apiClient.interceptors.request.use((config) => {
   const nextConfig = { ...config }
   nextConfig.headers = {
@@ -26,6 +27,7 @@ apiClient.interceptors.response.use(
   (error) => Promise.reject(toApiClientError(error)),
 )
 
+// Keep ApiResponse<T> unwrapping at the client boundary so feature code only deals with business data.
 export async function performApiRequest(requestConfig) {
   try {
     const response = await apiClient(requestConfig)

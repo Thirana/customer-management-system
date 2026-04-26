@@ -5,9 +5,10 @@ Customer Management System is a monorepo for a software engineer interview assig
 ## Current Status
 
 - Backend is implemented through Phase 7
-- Frontend Phase 2 customer list is implemented
+- Frontend Phase 3 create/edit flow is implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
-- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, and backend-driven customer list
+- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, and shared create/edit form flow
+- Family-member selection now uses backend search instead of preloading the full customer registry
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
 - Swagger UI at `http://localhost:8080/docs`
@@ -124,6 +125,8 @@ DELETE /api/v1/customers/{id}
 POST   /api/v1/customers/import
 GET    /api/v1/customers/import/{jobId}/status
 ```
+
+`GET /api/v1/customers` also accepts optional `search=<text>` filtering by customer name or NIC number.
 
 For backend-specific API behavior, request/response details, logging notes, and import rules, see [backend/README.md](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/backend/README.md:1).
 

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class CustomerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
     private static final int MAX_PAGE_SIZE = 100;
+    private static final Pattern MOBILE_NUMBER_PATTERN = Pattern.compile("\\d{10}");
     private static final Set<String> ALLOWED_SORT_FIELDS =
             new HashSet<String>(Arrays.asList("id", "name", "nicNumber", "dateOfBirth"));
 
@@ -55,13 +57,22 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<CustomerSummaryDTO> listCustomers(int page, int size, String sortBy, String sortDir) {
+    public PageResponse<CustomerSummaryDTO> listCustomers(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir,
+            String search
+    ) {
         Pageable pageable = PageRequest.of(
                 normalizePage(page),
                 normalizeSize(size),
                 Sort.by(resolveSortDirection(sortDir), resolveSortField(sortBy))
         );
-        Page<CustomerSummaryDTO> customers = customerRepository.findCustomerSummaries(pageable);
+        String normalizedSearch = normalizeSearch(search);
+        Page<CustomerSummaryDTO> customers = normalizedSearch == null
+                ? customerRepository.findCustomerSummaries(pageable)
+                : customerRepository.findCustomerSummariesBySearch(normalizedSearch, pageable);
         return PageResponse.from(customers);
     }
 
@@ -147,8 +158,15 @@ public class CustomerService {
             if (number == null || number.trim().isEmpty()) {
                 continue;
             }
+
+            String trimmedNumber = number.trim();
+            if (!MOBILE_NUMBER_PATTERN.matcher(trimmedNumber).matches()) {
+                LOGGER.warn("Customer write rejected because a mobile number failed validation");
+                throw new InvalidRequestException("Mobile numbers must contain exactly 10 digits.");
+            }
+
             MobileNumber mobileNumber = new MobileNumber();
-            mobileNumber.setMobileNumber(number.trim());
+            mobileNumber.setMobileNumber(trimmedNumber);
             mobileNumbers.add(mobileNumber);
         }
         return mobileNumbers;
@@ -232,5 +250,17 @@ public class CustomerService {
             return Sort.Direction.DESC;
         }
         return Sort.Direction.ASC;
+    }
+
+    private String normalizeSearch(String search) {
+        if (search == null) {
+            return null;
+        }
+
+        String trimmedSearch = search.trim();
+        if (trimmedSearch.isEmpty()) {
+            return null;
+        }
+        return trimmedSearch;
     }
 }

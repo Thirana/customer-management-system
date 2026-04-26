@@ -107,6 +107,16 @@ class CustomerServiceTest {
     }
 
     @Test
+    void createCustomerRejectsInvalidMobileNumber() {
+        CustomerCreateDTO request = createRequest("NIC-004-A");
+        request.setMobileNumbers(Collections.singletonList("07712ABC"));
+        when(customerRepository.existsByNicNumber("NIC-004-A")).thenReturn(false);
+
+        assertThrows(InvalidRequestException.class, () -> customerService.createCustomer(request));
+        verify(customerRepository, never()).save(any(Customer.class));
+    }
+
+    @Test
     void updateCustomerReplacesMutableFields() {
         CustomerUpdateDTO request = updateRequest("NIC-005-UPDATED");
         Customer existingCustomer = customer(5L, "NIC-005");
@@ -149,6 +159,16 @@ class CustomerServiceTest {
     }
 
     @Test
+    void updateCustomerRejectsInvalidMobileNumber() {
+        CustomerUpdateDTO request = updateRequest("NIC-007-A");
+        request.setMobileNumbers(Collections.singletonList("1234"));
+        when(customerRepository.findById(7L)).thenReturn(Optional.of(customer(7L, "NIC-007-A")));
+        when(customerRepository.existsByNicNumberAndIdNot("NIC-007-A", 7L)).thenReturn(false);
+
+        assertThrows(InvalidRequestException.class, () -> customerService.updateCustomer(7L, request));
+    }
+
+    @Test
     void getUpdateAndDeleteRejectMissingCustomer() {
         when(customerRepository.findDetailById(8L)).thenReturn(Optional.empty());
         when(customerRepository.findById(8L)).thenReturn(Optional.empty());
@@ -174,14 +194,27 @@ class CustomerServiceTest {
                 Collections.emptyList()
         ));
 
-        customerService.listCustomers(0, 20, "nicNumber", "desc");
+        customerService.listCustomers(0, 20, "nicNumber", "desc", null);
 
         verify(customerRepository).findCustomerSummaries(any());
     }
 
     @Test
+    void listCustomersUsesSearchQueryWhenPresent() {
+        when(customerRepository.findCustomerSummariesBySearch(eq("Kasun"), any()))
+                .thenReturn(new org.springframework.data.domain.PageImpl<>(Collections.emptyList()));
+
+        customerService.listCustomers(0, 20, "name", "asc", "  Kasun  ");
+
+        verify(customerRepository).findCustomerSummariesBySearch(eq("Kasun"), any());
+    }
+
+    @Test
     void listCustomersRejectsUnknownSortField() {
-        assertThrows(InvalidRequestException.class, () -> customerService.listCustomers(0, 10, "unknown", "asc"));
+        assertThrows(
+                InvalidRequestException.class,
+                () -> customerService.listCustomers(0, 10, "unknown", "asc", null)
+        );
     }
 
     private CustomerCreateDTO createRequest(String nicNumber) {

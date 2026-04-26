@@ -3,8 +3,9 @@ import { cn } from '../../lib/cn.js'
 
 export function SelectMenu({
   className,
+  disabled = false,
   onChange,
-  options,
+  options = [],
   placeholder,
   value,
 }) {
@@ -63,6 +64,10 @@ export function SelectMenu({
   }
 
   function handleTriggerKeyDown(event) {
+    if (disabled) {
+      return
+    }
+
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       setActiveIndex(
@@ -115,9 +120,17 @@ export function SelectMenu({
         aria-controls={listboxId}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="flex min-h-11 w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-4 text-left text-sm text-[var(--color-ink)] outline-none transition-colors focus-visible:border-[var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-[rgba(36,58,52,0.08)]"
+        className={cn(
+          'flex min-h-11 w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-4 text-left text-sm text-[var(--color-ink)] outline-none transition-colors focus-visible:border-[var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-[rgba(36,58,52,0.08)]',
+          disabled ? 'cursor-not-allowed opacity-55' : '',
+        )}
+        disabled={disabled}
         type="button"
         onClick={() => {
+          if (disabled) {
+            return
+          }
+
           if (isOpen) {
             closeMenu()
           } else {

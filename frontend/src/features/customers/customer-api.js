@@ -8,6 +8,18 @@ export function getCustomers(params = {}) {
   })
 }
 
+// Family-member lookup reuses the normal list contract so large datasets stay paged and searchable.
+export function searchCustomerSummaries(search, params = {}) {
+  return getCustomers({
+    page: 0,
+    size: 8,
+    sortBy: 'name',
+    sortDir: 'asc',
+    ...params,
+    search,
+  })
+}
+
 export function getCustomer(id) {
   return performApiRequest({
     method: 'get',
@@ -49,6 +61,7 @@ export function uploadCustomerImport(file) {
   const formData = new FormData()
   formData.append('file', file)
 
+  // Multipart upload is the one place where the customer API surface does not use JSON bodies.
   return performApiRequest({
     method: 'post',
     url: '/customers/import',

@@ -4,6 +4,7 @@ import { PageSection } from '../components/ui/PageSection.jsx'
 import { StatusBadge } from '../components/ui/StatusBadge.jsx'
 
 export function CustomerDetailPage() {
+  // Keep this route visually aligned now so the later detail pass can focus on data loading and actions.
   return (
     <div className="space-y-6">
       <Alert

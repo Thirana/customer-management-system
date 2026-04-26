@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -75,6 +76,29 @@ class CustomerRepositoryTest {
         assertEquals("Kasun Silva", page.getContent().get(0).getName());
         assertEquals(2, page.getContent().get(0).getMobileNumberCount());
         assertEquals(1, page.getContent().get(0).getAddressCount());
+    }
+
+    @Test
+    void customerSummarySearchMatchesNameAndNicNumber() {
+        customerRepository.saveAndFlush(customer("Kasun Silva", "NIC-SEARCH-001"));
+        customerRepository.saveAndFlush(customer("Amal Perera", "NIC-SEARCH-XYZ"));
+        customerRepository.saveAndFlush(customer("Kasun Fernando", "NIC-SEARCH-002"));
+        customerRepository.saveAndFlush(customer("Different Customer", "NIC-OTHER-123"));
+
+        Page<CustomerSummaryDTO> nameMatches = customerRepository.findCustomerSummariesBySearch(
+                "Kasun",
+                PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "name"))
+        );
+        Page<CustomerSummaryDTO> nicMatches = customerRepository.findCustomerSummariesBySearch(
+                "XYZ",
+                PageRequest.of(0, 10)
+        );
+
+        assertEquals(2, nameMatches.getTotalElements());
+        assertEquals(1, nameMatches.getContent().size());
+        assertEquals("Kasun Fernando", nameMatches.getContent().get(0).getName());
+        assertEquals(1, nicMatches.getTotalElements());
+        assertEquals("NIC-SEARCH-XYZ", nicMatches.getContent().get(0).getNicNumber());
     }
 
     @Test

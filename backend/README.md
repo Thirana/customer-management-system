@@ -135,6 +135,7 @@ page=0
 size=10
 sortBy=name | nicNumber | dateOfBirth | id
 sortDir=asc | desc
+search=<partial customer name or NIC number>
 ```
 
 Master data endpoint:

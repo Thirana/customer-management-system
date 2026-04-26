@@ -5,6 +5,7 @@ import { PageSection } from '../components/ui/PageSection.jsx'
 import { StatusBadge } from '../components/ui/StatusBadge.jsx'
 
 export function CustomerImportPage() {
+  // Preserve the final layout slots now because the upload and polling APIs are already stable on the backend.
   return (
     <div className="space-y-6">
       <Alert
