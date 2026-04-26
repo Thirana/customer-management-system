@@ -13,7 +13,7 @@ The frontend currently provides:
 - backend-driven customer list view with pagination, sorting, and delete refresh
 - reusable customer create/edit form with dynamic mobile, address, city, and searchable family-member inputs
 - customer detail view with back, edit, delete, and linked family-member navigation
-- import screen placeholders for the later bulk-import phase
+- bulk import screen with `.xlsx` upload, async status polling, progress summary, and row-level errors
 
 ## Environment
 
@@ -57,8 +57,8 @@ The root route redirects to `/customers`.
 - `/customers/new` and `/customers/:id/edit` support shared create/edit submission flow
 - create/edit uses backend city lookup, debounced customer search for family-member selection, and backend validation messages
 - `/customers/:id` loads the full customer profile with mobile numbers, addresses, family-member links, and delete behavior
+- `/customers/import` uploads `.xlsx` workbooks, polls import status every 2 seconds, and shows completion counts plus row-level errors
 - the shared shell, buttons, badges, sections, and list presentation use a warm-light product UI
-- `/customers/import` remains the placeholder route for the later import UI phase
 
 ## API Client
 
@@ -74,3 +74,22 @@ The shared API client is prepared for these backend operations:
 - poll import status
 
 The client matches the backend `ApiResponse<T>` envelope and surfaces backend validation or failure messages in a frontend-friendly format.
+
+## Import Notes
+
+- The import page accepts `.xlsx` files only
+- The expected first-sheet columns are `Name`, `Date of Birth`, `NIC Number`, and optional `Operation`
+- `Operation` supports `CREATE` and `UPDATE`
+- The page polls the backend import job every 2 seconds until it reaches `COMPLETED` or `FAILED`
+- A committed sample workbook is available at `backend/examples/customers-import-sample.xlsx`
+
+## Manual Smoke Checklist
+
+1. Start MariaDB, backend, and frontend.
+2. Open `/customers` and confirm the list loads.
+3. Create a customer from `/customers/new`.
+4. Open a customer detail page and confirm edit and delete actions work.
+5. Open `/customers/import`.
+6. Upload `backend/examples/customers-import-sample.xlsx`.
+7. Confirm progress, counts, and row-level errors update.
+8. Return to `/customers` and confirm imported customer changes appear in the list.

@@ -5,7 +5,7 @@ import { inputClasses } from './customerFormUtils.js'
 export function CustomerProfileSection({ form, updateField, validationErrors }) {
   return (
     <PageSection
-      description="These core fields map directly to the backend customer identity contract."
+      description="Enter the main personal details for this customer."
       title="Profile details"
     >
       <div className="grid gap-4 md:grid-cols-2">

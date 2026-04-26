@@ -15,7 +15,7 @@ export function CustomerListTable({
 }) {
   return (
     <PageSection
-      description="The table stays aligned to the backend pagination and sort contract. Actions remain available on each row for the next workflow step."
+      description="View saved customers and use the actions in each row to open, edit, or remove a record."
       title="Customer list"
     >
       <div className="overflow-hidden rounded-[24px] border border-[var(--color-border)]">

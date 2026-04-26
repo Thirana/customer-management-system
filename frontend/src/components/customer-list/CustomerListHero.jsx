@@ -16,8 +16,8 @@ export function CustomerListHero({ pageState, queryState, sortableColumns }) {
           </Button>
         </>
       }
-      description="Browse customer records from the backend, adjust list controls in place, and move directly into create, detail, edit, and import workflows."
-      eyebrow="Customer registry"
+      description="Browse customer records, adjust the list, and move straight into creating, viewing, editing, or importing customers."
+      eyebrow="Customers"
       title="Review and manage customer records"
     >
       <div className="flex flex-wrap gap-3">

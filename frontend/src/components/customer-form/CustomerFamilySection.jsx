@@ -18,7 +18,7 @@ export function CustomerFamilySection({
 
   return (
     <PageSection
-      description="Search by customer name or NIC number to attach existing customers as family members without loading the entire registry."
+      description="Search by customer name or NIC number to add existing customers as family members."
       title="Family members"
     >
       <div className="space-y-5">
@@ -48,7 +48,7 @@ export function CustomerFamilySection({
               Search results will appear here once the query is long enough.
             </p>
           ) : searchStatus === 'loading' ? (
-            <p className="text-sm text-[var(--color-ink-muted)]">Searching customer registry...</p>
+            <p className="text-sm text-[var(--color-ink-muted)]">Searching customers...</p>
           ) : searchStatus === 'error' ? (
             <p className="text-sm text-[var(--color-danger)]">
               Family-member lookup failed. Adjust the query and try again.

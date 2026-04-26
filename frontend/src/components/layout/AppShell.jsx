@@ -7,17 +7,17 @@ const NAV_ITEMS = [
     to: '/customers',
     label: 'Customers',
     end: true,
-    description: 'Browse the registry, review summaries, and move into customer detail or edit flows.',
+    description: 'Browse customers, review key details, and open each profile or edit page.',
   },
   {
     to: '/customers/new',
     label: 'Create',
-    description: 'Add a new customer record with contact details, addresses, and linked family members.',
+    description: 'Add a new customer with contact details, addresses, and family members.',
   },
   {
     to: '/customers/import',
     label: 'Import',
-    description: 'Upload Excel workbooks and monitor asynchronous import progress from one place.',
+    description: 'Upload Excel files and track import progress in one place.',
   },
 ]
 
@@ -29,8 +29,8 @@ export function AppShell() {
           <div className="flex flex-col gap-6">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
-                <StatusBadge tone="info">Spring Boot API ready</StatusBadge>
-                <StatusBadge tone="neutral">Detail view ready</StatusBadge>
+                <StatusBadge tone="info">Customer records ready</StatusBadge>
+                <StatusBadge tone="neutral">Import tools ready</StatusBadge>
               </div>
 
               <div className="space-y-3">
@@ -38,9 +38,8 @@ export function AppShell() {
                   Customer Management System
                 </h1>
                 <p className="max-w-3xl text-base leading-7 text-[var(--color-ink-soft)]">
-                  Local reviewer workspace for customer CRUD, master data lookup, and Excel import
-                  verification. The interface stays quiet and utility-focused so the remaining
-                  frontend phases can reuse the same structure cleanly.
+                  Manage customer records, profile details, family relationships, and Excel imports
+                  from one focused place built for everyday admin work.
                 </p>
               </div>
             </div>

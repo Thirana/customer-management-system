@@ -13,8 +13,8 @@ export function NotFoundPage() {
               Go to customers
             </Button>
           }
-          description="The requested frontend route is not part of the current customer management workspace."
-          eyebrow="Route not found"
+          description="The page you tried to open is not available."
+          eyebrow="Page not found"
           title="Page unavailable"
         />
       </div>

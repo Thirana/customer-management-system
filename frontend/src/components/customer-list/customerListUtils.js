@@ -45,7 +45,7 @@ export function parseSortDirection(value) {
 
 export function formatDate(value) {
   if (!value) {
-    return '—'
+    return 'Not provided'
   }
 
   const date = new Date(value)

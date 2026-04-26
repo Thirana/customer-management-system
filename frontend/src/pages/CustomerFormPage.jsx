@@ -364,7 +364,7 @@ export function CustomerFormPage({ mode }) {
   if (bootStatus === "loading") {
     return (
       <PageSection
-        description="Loading city options, family-member choices, and any existing customer data required for the form."
+        description="Loading the details needed for this form."
         eyebrow={isEdit ? "Edit customer" : "Create customer"}
         title={
           isEdit
@@ -372,7 +372,7 @@ export function CustomerFormPage({ mode }) {
             : "Preparing customer create form"
         }
       >
-        <LoadingState label="Preparing form workspace..." />
+        <LoadingState label="Preparing form..." />
       </PageSection>
     );
   }
@@ -392,7 +392,7 @@ export function CustomerFormPage({ mode }) {
               Return to customers
             </Button>
           }
-          description="The form route is available, but the required master data or customer data could not be loaded."
+          description="The form could not be opened because some customer details could not be loaded."
           eyebrow="Customer form"
           title="Unable to prepare form"
         />

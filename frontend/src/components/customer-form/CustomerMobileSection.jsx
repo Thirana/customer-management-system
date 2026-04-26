@@ -17,7 +17,7 @@ export function CustomerMobileSection({
           Add mobile number
         </Button>
       }
-      description="Blank rows are ignored when the payload is submitted."
+      description="Leave unused rows blank and they will not be saved."
       title="Mobile numbers"
     >
       <div className="space-y-4">

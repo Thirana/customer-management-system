@@ -211,7 +211,7 @@ export function CustomerListPage() {
       {status === "empty" ? (
         <EmptyState
           title="No customers found"
-          message="Create a customer or import a workbook to populate the registry."
+          message="Create a customer or import a workbook to start building your customer list."
         />
       ) : null}
 

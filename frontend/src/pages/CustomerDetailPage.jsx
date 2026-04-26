@@ -111,7 +111,7 @@ export function CustomerDetailPage() {
               Back to customers
             </Button>
           }
-          description="The customer ID in the current route did not return a record from the backend."
+          description="We could not find a customer for this link."
           eyebrow="Customer detail"
           title="Record unavailable"
         />
@@ -134,7 +134,7 @@ export function CustomerDetailPage() {
               Back to customers
             </Button>
           }
-          description="The route is available, but the backend detail request did not complete successfully."
+          description="The customer details could not be loaded right now."
           eyebrow="Customer detail"
           title="Unable to load profile"
         />
@@ -158,7 +158,7 @@ export function CustomerDetailPage() {
             </Button>
           </>
         }
-        description="Review the customer's stored profile, contact details, address records, and linked family members."
+        description="View this customer's profile details, contact information, addresses, and family members."
         eyebrow="Customer detail"
         title={customer.name}
       >
@@ -175,7 +175,7 @@ export function CustomerDetailPage() {
       ) : null}
 
       <PageSection
-        description="These core values match the main identity fields used across create, edit, list, and import workflows."
+        description="These are the main personal details saved for this customer."
         title="Profile details"
       >
         <div className="grid gap-4 md:grid-cols-3">
@@ -186,7 +186,7 @@ export function CustomerDetailPage() {
       </PageSection>
 
       <PageSection
-        description="Every saved mobile number is shown here in the order returned by the backend."
+        description="All saved mobile numbers are shown here."
         title="Mobile numbers"
       >
         {customer.mobileNumbers.length === 0 ? (
@@ -205,7 +205,7 @@ export function CustomerDetailPage() {
       </PageSection>
 
       <PageSection
-        description="Addresses stay aligned to backend master data so city and country values render as reviewer-friendly names."
+        description="Saved addresses are shown with their city and country."
         title="Addresses"
       >
         {customer.addresses.length === 0 ? (
@@ -293,5 +293,5 @@ function QuietEmptyState({ message }) {
 }
 
 function toDisplayValue(value) {
-  return value && value.trim() ? value : '—'
+  return value && value.trim() ? value : 'Not provided'
 }

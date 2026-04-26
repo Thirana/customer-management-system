@@ -5,9 +5,9 @@ Customer Management System is a monorepo for a software engineer interview assig
 ## Current Status
 
 - Backend is implemented through Phase 7
-- Frontend customer list, create/edit flow, and detail view are implemented
+- Frontend customer list, create/edit flow, detail view, and import UI are implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
-- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, customer detail view, and shared create/edit form flow
+- Vite React frontend with routing, Tailwind-based warm-light UI, shared API client, backend-driven customer list, customer detail view, shared create/edit form flow, and async import UI
 - Family-member selection now uses backend search instead of preloading the full customer registry
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
@@ -187,6 +187,19 @@ Detailed backend testing guides:
 - [Backend smoke testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-smoke-testing.md:1)
 
 Frontend currently uses manual verification only.
+
+Suggested full-stack smoke flow:
+
+1. Start MariaDB.
+2. Start the backend.
+3. Start the frontend.
+4. Create a customer.
+5. Update a customer.
+6. Open a customer detail page.
+7. Delete a customer from the detail or list view.
+8. Upload `backend/examples/customers-import-sample.xlsx`.
+9. Confirm import progress, completion counts, and row-level errors render.
+10. Return to `/customers` and confirm imported changes appear in the list.
 
 ## Common Commands
 

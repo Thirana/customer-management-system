@@ -33,7 +33,7 @@ export function CustomerAddressesSection({
               <div>
                 <p className="text-sm font-semibold text-[var(--color-ink)]">Address {index + 1}</p>
                 <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
-                  Keep the city aligned to the backend master data list.
+                  Choose the country and city, then add the street details you want to save.
                 </p>
               </div>
 

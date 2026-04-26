@@ -13,7 +13,7 @@ export function CustomerListControls({
       <section className="rounded-[24px] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-5 shadow-[var(--shadow-soft)]">
         <p className="text-sm font-semibold text-[var(--color-ink)]">List density</p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-ink-muted)]">
-          Tune the page size without leaving the list view.
+          Choose how many customers to show at once.
         </p>
         <label className="mt-4 block">
           <span className="mb-2 block text-sm font-medium text-[var(--color-ink-soft)]">Rows</span>
@@ -32,7 +32,7 @@ export function CustomerListControls({
       <section className="rounded-[24px] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-5 shadow-[var(--shadow-soft)]">
         <p className="text-sm font-semibold text-[var(--color-ink)]">Sort customers</p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-ink-muted)]">
-          Change the backend sort field and direction from this control panel.
+          Choose how customers should be ordered in the list.
         </p>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
