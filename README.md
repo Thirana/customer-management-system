@@ -1,11 +1,13 @@
 # Customer Management System
 
-Customer Management System is a monorepo for a software engineer interview assignment. The repository currently contains a Spring Boot backend, Docker-managed MariaDB for local development, Postman artifacts for API testing, and import tooling for Excel-based bulk customer onboarding. The frontend is still pending.
+Customer Management System is a monorepo for a software engineer interview assignment. The repository currently contains a Spring Boot backend, a Vite + React frontend scaffold, Docker-managed MariaDB for local development, Postman artifacts for API testing, and import tooling for Excel-based bulk customer onboarding.
 
 ## Current Status
 
 - Backend is implemented through Phase 7
+- Frontend Phase 1 scaffold is implemented
 - Spring Boot 2.7.18 API with Java 8 target compatibility
+- Vite React frontend with routing and shared API client foundation
 - MariaDB + Flyway schema management
 - Customer CRUD, city lookup, and async Excel import APIs
 - Swagger UI at `http://localhost:8080/docs`
@@ -22,6 +24,10 @@ customer-management-system/
 │   ├── README.md
 │   ├── scripts/
 │   └── src/
+├── frontend/                Vite React application
+│   ├── README.md
+│   ├── package.json
+│   └── src/
 ├── docs/postman/            Importable Postman collection and environment
 ├── docs/testing/            Backend automated and smoke-test guides
 ├── docker-compose.yml       Local MariaDB service
@@ -33,6 +39,7 @@ customer-management-system/
 
 - Java
 - Maven
+- Node.js
 - Docker Desktop or another running Docker daemon
 - Postman or another API client for manual testing
 
@@ -66,6 +73,20 @@ http://localhost:8080/docs
 ```
 
 The default active profile is `dev`. Flyway runs automatically on startup and applies the schema plus master data.
+
+5. Start the frontend from a second terminal.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend Phase 1 runs by default at:
+
+```text
+http://localhost:5173
+```
 
 ## Database
 
@@ -160,6 +181,8 @@ Detailed backend testing guides:
 - [Backend automated testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-automated-testing.md:1)
 - [Backend smoke testing](/Users/thiranaembuldeniya/Documents/SE/Projects/customer-management-system/docs/testing/backend-smoke-testing.md:1)
 
+Frontend Phase 1 currently uses manual verification only.
+
 ## Common Commands
 
 From the repository root:
@@ -179,9 +202,18 @@ mvn test
 mvn spring-boot:run
 ```
 
+From `frontend/`:
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
 ## Documentation Map
 
 - `README.md` is the main monorepo setup and reviewer guide
 - `backend/README.md` contains backend-specific implementation and operational notes
+- `frontend/README.md` contains frontend-specific setup and route notes
 - `docs/postman/` contains Postman artifacts for manual API testing
 - `docs/testing/` contains backend automated and smoke-test guides

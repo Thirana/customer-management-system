@@ -1,0 +1,383 @@
+:root {
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #d8dee7;
+  background-color: #11161d;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(35, 70, 92, 0.28), transparent 28%),
+    linear-gradient(180deg, #11161d 0%, #0d1218 100%);
+  color: #d8dee7;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #1e2732;
+  background: rgba(10, 14, 19, 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.brand-block {
+  min-width: 0;
+}
+
+.brand-title {
+  margin: 0.2rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f4f7fb;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #7ea6c2;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.runtime-chip {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #254154;
+  border-radius: 999px;
+  color: #a9cce2;
+  background: rgba(24, 48, 66, 0.45);
+  white-space: nowrap;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: calc(100vh - 87px);
+}
+
+.sidebar {
+  padding: 1.5rem;
+  border-right: 1px solid #1b2530;
+  background: rgba(10, 14, 19, 0.55);
+}
+
+.nav-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.nav-item {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #b9c4d0;
+  background: transparent;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.nav-item:hover {
+  border-color: #223547;
+  background: rgba(24, 36, 48, 0.52);
+  color: #eff5fb;
+}
+
+.nav-item.active {
+  border-color: #2c4d67;
+  background: rgba(33, 61, 83, 0.52);
+  color: #f4f8fc;
+}
+
+.sidebar-panel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #1e2732;
+  border-radius: 8px;
+  background: rgba(18, 24, 31, 0.9);
+}
+
+.sidebar-heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #eff5fb;
+}
+
+.sidebar-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: #9eacb8;
+}
+
+.sidebar-list li + li {
+  margin-top: 0.5rem;
+}
+
+.main-panel {
+  min-width: 0;
+  padding: 1.75rem 2rem 2rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  margin: 0.25rem 0 0;
+  color: #f3f7fc;
+  font-size: 1.9rem;
+  font-weight: 600;
+}
+
+.page-description {
+  margin: 0;
+  max-width: 38rem;
+  color: #95a7b8;
+  text-align: right;
+}
+
+.page-content,
+.page-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.surface,
+.subsurface {
+  border: 1px solid #1d2732;
+  border-radius: 8px;
+  background: rgba(14, 19, 26, 0.88);
+}
+
+.surface {
+  padding: 1.25rem;
+}
+
+.subsurface {
+  padding: 1rem;
+}
+
+.surface-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.surface-header h3,
+.subsurface h3 {
+  margin: 0;
+  color: #eef4fb;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.surface-meta {
+  color: #8ca0b3;
+  font-size: 0.9rem;
+}
+
+.alert {
+  padding: 0.95rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #20425a;
+  background: rgba(17, 43, 59, 0.55);
+}
+
+.alert strong {
+  display: block;
+  color: #e7f4fb;
+  margin-bottom: 0.25rem;
+}
+
+.alert p {
+  margin: 0;
+  color: #9ec1d7;
+}
+
+.empty-state {
+  padding: 1rem 0.15rem 0.1rem;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.45rem;
+  color: #eef4fb;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #91a4b6;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid #1d2732;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  color: #b0c3d4;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.form-surface {
+  min-height: 260px;
+}
+
+.import-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.loading-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #c5d3e0;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #31506b;
+  border-top-color: #8bb1ca;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+.not-found {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.not-found h1 {
+  margin: 0;
+  color: #f4f7fb;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.not-found p {
+  margin: 0;
+  color: #97a8b8;
+}
+
+.primary-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 1rem;
+  border: 1px solid #2c4d67;
+  border-radius: 8px;
+  color: #eff7fd;
+  background: rgba(33, 61, 83, 0.52);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 960px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #1b2530;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-description {
+    text-align: left;
+  }
+
+  .import-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar,
+  .main-panel,
+  .sidebar {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .surface-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-header h2 {
+    font-size: 1.55rem;
+  }
+}
